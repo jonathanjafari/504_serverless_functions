@@ -94,7 +94,7 @@ gcloud functions deploy hba1c \
     --allow-unauthenticated
 ```
 
-### ✅ GCP Screenshots
+### GCP Screenshots
 
 **Function Deployment Output (Terminal)**  
 ![GCP Function Deploy Output](images/gcloud_functions_deploy_url.png)
