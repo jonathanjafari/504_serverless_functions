@@ -2,17 +2,15 @@
 import json
 import azure.functions as func
 
-# Public demo: no key required
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 def _parse_hba1c(req: func.HttpRequest):
-    # Accept both names: a1c or hba1c
-    val = req.params.get("a1c") or req.params.get("hba1c")
+    val = req.params.get("hba1c")
     if not val:
         try:
             body = req.get_json()
             if isinstance(body, dict):
-                val = body.get("a1c") or body.get("hba1c")
+                val = body.get("hba1c")
         except ValueError:
             val = None
     try:
@@ -32,13 +30,13 @@ def _classify(hba1c: float):
         category = "Diabetes (≥6.5%)"
     return {"hba1c": hba1c, "status": status, "category": category}
 
-@app.route(route="hba1c", methods=["GET","POST"], auth_level=func.AuthLevel.ANONYMOUS)
+@app.route(route="hba1c", methods=["GET","POST"])
 def hba1c(req: func.HttpRequest) -> func.HttpResponse:
     try:
         val = _parse_hba1c(req)
         if val is None:
             return func.HttpResponse(
-                json.dumps({"error": "Provide 'a1c' (or 'hba1c') as a number in query or JSON."}),
+                json.dumps({"error": "Provide 'hba1c' as number in query or JSON."}),
                 status_code=400,
                 mimetype="application/json"
             )
